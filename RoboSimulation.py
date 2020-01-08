@@ -40,6 +40,7 @@ class Robot:
             self.yaw -= -self.ANG_VEL*2*math.pi/360
 
     def draw(self, win):
+
         orig_rect = self.IMG.get_rect()
         rot_image = pygame.transform.rotate(self.IMG, self.yaw)
         rot_rect = rot_image.get_rect(center=orig_rect.center)
