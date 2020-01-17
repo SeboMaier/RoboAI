@@ -9,8 +9,9 @@ class Map(pygame.sprite.Sprite):
         self.image = load_image("bg.png")
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
+        self.rect.topleft = (0, 0)
         self.x = x
-        self.y = y
+        self.y = x
 
         # Realign the map
     def update(self, cam_x, cam_y):
