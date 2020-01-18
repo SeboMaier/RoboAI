@@ -1,17 +1,18 @@
 import pygame
 import os
 from loader import load_image
+from random import randint
 
 
-class Map(pygame.sprite.Sprite):
+class Holes(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = load_image("bg.png")
+        self.image = load_image("hole.png")
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.topleft = (0, 0)
-        self.x = 0
-        self.y = 0
+        self.x = randint(0, 1800)
+        self.y = randint(0, 1000)
 
         # Realign the map
     def update(self, cam_x, cam_y):
