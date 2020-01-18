@@ -22,9 +22,15 @@ class Simulation:
                     if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                         self.running = False
                         break
-            self.check_collision(self.car, self.map_s)
+            if self.check_collision(self.car, self.map_s):
+                self.car.reset()
+                self.robrange.reset()
 
             keys = pygame.key.get_pressed()
+
+            if keys[K_SPACE]:
+                spritelist = self.check_collision(self.robrange, self.hole_s, True)
+                self.score += len(spritelist)*self.holescore
 
             if keys[K_LEFT]:
                 self.car.steerleft()
@@ -55,15 +61,16 @@ class Simulation:
                 self.car.animation(self.animation_count)
                 if self.animation_count > 14:
                     self.animation_count = 0
-
                 self.animation_count += 1
                 self.car.speed = -10
 
             self.cam.set_pos(self.car.x, self.car.y)
 
     #Show text data.
-            text_fps = self.font.render('FPS: ' + str(int(self.clock.get_fps())), 1, (224, 16, 16))
+            text_fps = self.font.render('FPS: ' + str(int(self.clock.get_fps())), 1, (255, 127, 0))
             textpos_fps = text_fps.get_rect(centery=25, centerx=60)
+            text_score = self.font.render("Score: " + str(self.score), 1, (255, 127, 0))
+            textpos_score = text_score.get_rect(centery=50, centerx=60)
 
             self.screen.blit(self.background, (0, 0))
 
@@ -73,32 +80,40 @@ class Simulation:
             self.path_s.update(self.cam.x, self.cam.y)
             self.path_s.draw(self.screen)
 
+            self.range_s.update(self.cam.x, self.cam.y)
+            self.range_s.draw(self.screen)
+
             self.map_s.update(self.cam.x, self.cam.y)
             self.map_s.draw(self.screen)
+
 
             self.player_s.update(self.cam.x, self.cam.y)
             self.player_s.draw(self.screen)
 
-            self.range_s.update(self.cam.x, self.cam.y)
-            self.range_s.draw(self.screen)
 
             self.hole_s.update(self.cam.x, self.cam.y)
             self.hole_s.draw(self.screen)
 
             self.screen.blit(text_fps, textpos_fps)
+            self.screen.blit(text_score, textpos_score)
 
             pygame.display.update()
             self.clock.tick(64)
 
     #initialization
-    def check_collision(self, sprite, sprite_group):
-        if pygame.sprite.spritecollide(sprite, sprite_group, False, pygame.sprite.collide_mask):
-            self.car.reset()
-            self.robrange.reset()
+    def check_collision(self, sprite, sprite_group, dokill=False):
+        spritelist = pygame.sprite.spritecollide(sprite, sprite_group, dokill, pygame.sprite.collide_mask)
+        if spritelist:
+            return spritelist
+        else:
+            return []
 
     def __init__(self):
 
         pygame.init()
+
+        self.score = 0
+        self.holescore = 10
         self.map_s = pygame.sprite.Group()
         self.player_s = pygame.sprite.Group()
         self.path_s = pygame.sprite.Group()
@@ -109,10 +124,8 @@ class Simulation:
         self.bound_alert_s = pygame.sprite.Group()
         self.menu_alert_s = pygame.sprite.Group()
 
-
-
         self.screen = pygame.display.set_mode((1500, 800))
-        for r in range(10):
+        for r in range(20):
             self.hole = holes.Holes()
             self.hole.add(self.hole_s)
 

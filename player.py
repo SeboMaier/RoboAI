@@ -48,14 +48,6 @@ class Player(pygame.sprite.Sprite):
         self.rect.topleft = (self.x - 100, self.y - 200)
         self.mask = pygame.mask.from_surface(self.image)
 
-    def accelerate(self):
-        self.speed = 11.5
-        self.mask = pygame.mask.from_surface(self.image)
-
-    def deaccelerate(self):
-        self.speed = - 11.5
-        self.mask = pygame.mask.from_surface(self.image)
-
     def steerleft(self):
         self.dir = self.dir+self.steering
         if self.dir > 360:

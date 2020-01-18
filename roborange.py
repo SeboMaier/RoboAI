@@ -14,8 +14,8 @@ class RoRange(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = load_image('range.png', False)
-        self.image.fill((255, 255, 255, 64), None, pygame.BLEND_RGBA_MULT)
         self.image_orig = self.image
+        #self.image.fill((255, 255, 255, 64), None, pygame.BLEND_RGBA_MULT)
         self.rect = self.image.get_rect()
         self.screen = pygame.display.get_surface()
         self.area = self.screen.get_rect()
