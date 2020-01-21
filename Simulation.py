@@ -8,8 +8,12 @@ import player
 import camera
 import roborange
 import holes
+import path
 import sensors
 
+PATH = True
+USE_SENSORS = True
+SHOW_SENSORS = False
 
 class Simulation:
     def main(self):
@@ -68,25 +72,28 @@ class Simulation:
 
             self.cam.set_pos(self.car.x, self.car.y)
 
+
+
     #Show text data.
             text_fps = self.font.render('FPS: ' + str(int(self.clock.get_fps())), 1, (255, 127, 0))
             textpos_fps = text_fps.get_rect(centery=25, centerx=60)
             text_score = self.font.render("Score: " + str(self.score), 1, (255, 127, 0))
             textpos_score = text_score.get_rect(centery=50, centerx=60)
-            text_s1 = self.font.render('S1: ' + str(int(self.sensor1.delta)), 1, (255, 127, 0))
-            textpos_s1 = text_s1.get_rect(centery=75, centerx=60)
-            text_s2 = self.font.render('S2: ' + str(int(self.sensor2.delta)), 1, (255, 127, 0))
-            textpos_s2 = text_s1.get_rect(centery=100, centerx=60)
-            text_s3 = self.font.render('S3: ' + str(int(self.sensor3.delta)), 1, (255, 127, 0))
-            textpos_s3 = text_s1.get_rect(centery=125, centerx=60)
-            text_s4 = self.font.render('S4: ' + str(int(self.sensor4.delta)), 1, (255, 127, 0))
-            textpos_s4 = text_s1.get_rect(centery=150, centerx=60)
-            text_s5 = self.font.render('S5: ' + str(int(self.sensor5.delta)), 1, (255, 127, 0))
-            textpos_s5 = text_s1.get_rect(centery=175, centerx=60)
-            text_s6 = self.font.render('S6: ' + str(int(self.sensor6.delta)), 1, (255, 127, 0))
-            textpos_s6 = text_s1.get_rect(centery=200, centerx=60)
-            self.screen.blit(self.background, (0, 0))
+            if USE_SENSORS:
+                text_s1 = self.font.render('S1: ' + str(int(self.sensor1.delta)), 1, (255, 127, 0))
+                textpos_s1 = text_s1.get_rect(centery=75, centerx=60)
+                text_s2 = self.font.render('S2: ' + str(int(self.sensor2.delta)), 1, (255, 127, 0))
+                textpos_s2 = text_s1.get_rect(centery=100, centerx=60)
+                text_s3 = self.font.render('S3: ' + str(int(self.sensor3.delta)), 1, (255, 127, 0))
+                textpos_s3 = text_s1.get_rect(centery=125, centerx=60)
+                text_s4 = self.font.render('S4: ' + str(int(self.sensor4.delta)), 1, (255, 127, 0))
+                textpos_s4 = text_s1.get_rect(centery=150, centerx=60)
+                text_s5 = self.font.render('S5: ' + str(int(self.sensor5.delta)), 1, (255, 127, 0))
+                textpos_s5 = text_s1.get_rect(centery=175, centerx=60)
+                text_s6 = self.font.render('S6: ' + str(int(self.sensor6.delta)), 1, (255, 127, 0))
+                textpos_s6 = text_s1.get_rect(centery=200, centerx=60)
 
+            self.screen.blit(self.background, (0, 0))
 
             self.path_s.update(self.cam.x, self.cam.y)
             self.hole_s.update(self.cam.x, self.cam.y)
@@ -94,23 +101,31 @@ class Simulation:
             self.map_s.update(self.cam.x, self.cam.y)
             self.player_s.update(self.cam.x, self.cam.y)
 
-            self.sensor_s.update(self.car.dir, self.CENTER_X, self.CENTER_Y)
-            self.measure(self.sensor_s)
+            if USE_SENSORS:
+                self.sensor_s.update(self.car.dir, self.CENTER_X, self.CENTER_Y)
+                self.measure(self.sensor_s)
 
-            self.path_s.draw(self.screen)
+            if PATH:
+                self.path.image.fill((255, 127, 0), Rect(self.car.x, self.car.y, 5, 5))
+                self.path_s.draw(self.screen)
+
             self.range_s.draw(self.screen)
             self.map_s.draw(self.screen)
-            self.sensor_s.draw(self.screen)
+            if SHOW_SENSORS:
+                self.sensor_s.draw(self.screen)
             self.player_s.draw(self.screen)
             self.hole_s.draw(self.screen)
+
+
             self.screen.blit(text_fps, textpos_fps)
             self.screen.blit(text_score, textpos_score)
-            self.screen.blit(text_s1, textpos_s1)
-            self.screen.blit(text_s2, textpos_s2)
-            self.screen.blit(text_s3, textpos_s3)
-            self.screen.blit(text_s4, textpos_s4)
-            self.screen.blit(text_s5, textpos_s5)
-            self.screen.blit(text_s6, textpos_s6)
+            if USE_SENSORS:
+                self.screen.blit(text_s1, textpos_s1)
+                self.screen.blit(text_s2, textpos_s2)
+                self.screen.blit(text_s3, textpos_s3)
+                self.screen.blit(text_s4, textpos_s4)
+                self.screen.blit(text_s5, textpos_s5)
+                self.screen.blit(text_s6, textpos_s6)
 
             pygame.display.update()
             self.clock.tick(64)
@@ -182,25 +197,27 @@ class Simulation:
         self.cam = camera.Camera()
         self.robrange = roborange.RoRange()
         self.current_map = maps.Map()
+        self.path = path.Path()
 
         # Sensoren erstellen
-        self.sensor1 = sensors.Sensor(0)
-        self.sensor2 = sensors.Sensor(30)
-        self.sensor3 = sensors.Sensor(150)
-        self.sensor4 = sensors.Sensor(180)
-        self.sensor5 = sensors.Sensor(210)
-        self.sensor6 = sensors.Sensor(330)
-        self.sensor_s.add(self.sensor1)
-        self.sensor_s.add(self.sensor2)
-        self.sensor_s.add(self.sensor3)
-        self.sensor_s.add(self.sensor4)
-        self.sensor_s.add(self.sensor5)
-        self.sensor_s.add(self.sensor6)
+        if USE_SENSORS:
+            self.sensor1 = sensors.Sensor(0)
+            self.sensor2 = sensors.Sensor(30)
+            self.sensor3 = sensors.Sensor(150)
+            self.sensor4 = sensors.Sensor(180)
+            self.sensor5 = sensors.Sensor(210)
+            self.sensor6 = sensors.Sensor(330)
+            self.sensor_s.add(self.sensor1)
+            self.sensor_s.add(self.sensor2)
+            self.sensor_s.add(self.sensor3)
+            self.sensor_s.add(self.sensor4)
+            self.sensor_s.add(self.sensor5)
+            self.sensor_s.add(self.sensor6)
 
         self.map_s.add(self.current_map)
         self.player_s.add(self.car)
         self.range_s.add(self.robrange)
-        self.sensor_s.add(self.sensor1)
+        self.path_s.add(self.path)
 
 
         pygame.display.set_caption('RoboSimAI')
